@@ -9,17 +9,33 @@ export class DrawingCanvas {
     this.lineWidth = 4;
 
     this._resize();
+    this._observeResize();
     window.addEventListener('resize', () => this._resize());
 
     this._bindMouseEvents();
     this._bindTouchEvents();
   }
 
+  _observeResize() {
+    const target = this.canvas.parentElement;
+    if (!target || typeof ResizeObserver === 'undefined') return;
+
+    this._resizeObserver = new ResizeObserver(() => this._resize());
+    this._resizeObserver.observe(target);
+  }
+
   _resize() {
     const rect = this.canvas.getBoundingClientRect();
+    if (rect.width < 1 || rect.height < 1) return;
+
     const dpr = window.devicePixelRatio || 1;
-    this.canvas.width = rect.width * dpr;
-    this.canvas.height = rect.height * dpr;
+    const nextWidth = Math.round(rect.width * dpr);
+    const nextHeight = Math.round(rect.height * dpr);
+
+    if (this.canvas.width === nextWidth && this.canvas.height === nextHeight) return;
+
+    this.canvas.width = nextWidth;
+    this.canvas.height = nextHeight;
     this.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     this.ctx.lineCap = 'round';
     this.ctx.lineJoin = 'round';
