@@ -6,7 +6,7 @@ Funciona **100 % en GitHub Pages**, sin Vercel ni backend. La API key de Gemini 
 
 ## Funciones
 
-- Lienzo con **ratón**, **tacto** o **mano** (webcam + MediaPipe)
+- Lienzo con **ratón** o **tacto** en pantalla
 - Palabra clave configurable
 - Botón **Entregar dibujo** → Gemini puntúa y explica
 - **Panel de control** (`admin.html`) para palabras clave y API key
@@ -95,14 +95,6 @@ Si ves *「Cuota agotada」*, espera unos minutos o al día siguiente.
 
 ---
 
-## Modo mano
-
-- Activa **Mano (cámara)** y permite la webcam
-- Mueve el índice sobre el lienzo
-- **Dibuja** pellizcando pulgar e índice, o levantando solo el índice
-
----
-
 ## Privacidad y seguridad
 
 - La API key vive en **localStorage** de tu navegador; no va al repo de GitHub.
@@ -127,5 +119,4 @@ css/          → Estilos
 | «Configura tu API key…» | Ve a `admin.html` y guarda la key |
 | «API key rechazada» | Crea una key nueva en AI Studio y vuelve a guardarla |
 | «Cuota agotada» | Espera o usa otro modelo Flash en el panel |
-| Modo mano no funciona | Permite cámara; prueba Chrome; usa ratón como alternativa |
 | Palabra no cambia | Configúrala en `admin.html` o pulsa «Otra palabra» |
