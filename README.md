@@ -6,10 +6,11 @@ Funciona **100 % en GitHub Pages**, sin Vercel ni backend. La API key de Gemini 
 
 ## Funciones
 
-- Lienzo con **ratón** o **tacto** en pantalla
-- Palabra clave configurable
-- Botón **Entregar dibujo** → Gemini puntúa y explica
-- **Panel de control** (`admin.html`) para palabras clave y API key
+- Lienzo **a pantalla completa** (ratón o tacto)
+- Modo **Gemini elige**: propone palabras dibujables (estilo Pictionary / juegos de mesa)
+- Modo **Mi lista**: palabras del panel de control
+- Botón **Entregar** → Gemini puntúa del 1 al 10
+- **Panel de control** (`admin.html`) para API key y lista personal
 
 ## Despliegue en GitHub Pages
 

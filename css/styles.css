@@ -26,6 +26,12 @@ body {
   min-height: 100%;
 }
 
+html.game-page,
+html.game-page body {
+  height: 100%;
+  overflow: hidden;
+}
+
 body {
   font-family: var(--font-body);
   color: var(--ink);
@@ -363,6 +369,161 @@ code {
   border: 1px solid var(--border);
   border-radius: 12px;
   background: white;
+}
+
+/* ——— Pantalla de juego a pantalla completa ——— */
+
+.game-shell {
+  display: flex;
+  flex-direction: column;
+  height: 100dvh;
+  max-height: 100dvh;
+  padding:
+    max(0.5rem, env(safe-area-inset-top))
+    max(0.5rem, env(safe-area-inset-right))
+    max(0.5rem, env(safe-area-inset-bottom))
+    max(0.5rem, env(safe-area-inset-left));
+  background: var(--surface);
+}
+
+.game-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  flex-shrink: 0;
+  padding-bottom: 0.35rem;
+}
+
+.topbar-title .eyebrow {
+  margin: 0;
+  font-size: 0.78rem;
+}
+
+.nav-link-compact {
+  padding: 0.45rem 0.75rem;
+  font-size: 0.85rem;
+}
+
+.keyword-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  flex-shrink: 0;
+  padding: 0.35rem 0 0.5rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.keyword-main {
+  min-width: 0;
+  flex: 1;
+}
+
+.keyword-main .label {
+  font-size: 0.8rem;
+  margin-bottom: 0.1rem;
+}
+
+.keyword-main .keyword-display {
+  margin: 0;
+  font-size: clamp(1.35rem, 5vw, 2rem);
+  line-height: 1.1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.word-hint {
+  margin: 0.15rem 0 0;
+  font-size: 0.78rem;
+  color: var(--muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mode-switch {
+  display: flex;
+  flex-shrink: 0;
+  gap: 0.35rem;
+}
+
+.btn-mode {
+  padding: 0.45rem 0.7rem;
+  font-size: 0.78rem;
+  background: white;
+  border: 1px solid var(--border);
+  color: var(--ink);
+}
+
+.btn-mode.active {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.canvas-stage {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  padding: 0.5rem 0;
+}
+
+.canvas-stage .canvas-wrapper {
+  flex: 1;
+  width: 100%;
+  min-height: 0;
+  aspect-ratio: unset;
+  border-radius: 10px;
+}
+
+.game-dock {
+  flex-shrink: 0;
+  padding-top: 0.35rem;
+  border-top: 1px solid var(--border);
+}
+
+.game-dock .toolbar-actions {
+  width: 100%;
+}
+
+.game-dock .toolbar-actions .btn {
+  flex: 1;
+  min-width: 0;
+  padding: 0.75rem 0.5rem;
+}
+
+.game-dock .status-message {
+  margin: 0.35rem 0 0;
+  min-height: 1.2rem;
+  font-size: 0.82rem;
+}
+
+.result-sheet {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding: 1rem;
+  padding-bottom: max(1rem, env(safe-area-inset-bottom));
+  background: rgba(26, 26, 46, 0.45);
+}
+
+.result-sheet[hidden] {
+  display: none;
+}
+
+.result-sheet-inner {
+  width: min(100%, 420px);
+  text-align: center;
+}
+
+.result-sheet-inner .btn-primary {
+  width: 100%;
+  margin-top: 0.75rem;
 }
 
 @media (max-width: 640px) {

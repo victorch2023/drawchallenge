@@ -3,10 +3,13 @@ const STORAGE_KEYS = {
   activeKeyword: 'drawchallenge_active_keyword',
   geminiApiKey: 'drawchallenge_gemini_api_key',
   geminiModel: 'drawchallenge_gemini_model',
+  gameMode: 'drawchallenge_game_mode',
+  geminiWordHistory: 'drawchallenge_gemini_word_history',
 };
 
 const DEFAULT_KEYWORDS = ['árbol', 'casa', 'sol', 'gato', 'coche', 'flor'];
 const DEFAULT_GEMINI_MODEL = 'gemini-2.5-flash';
+const MAX_WORD_HISTORY = 40;
 
 export function getKeywords() {
   const stored = localStorage.getItem(STORAGE_KEYS.keywords);
@@ -75,4 +78,35 @@ export function setGeminiModel(model) {
 export function maskGeminiApiKey(key) {
   if (!key || key.length < 8) return '—';
   return `${key.slice(0, 4)}…${key.slice(-4)}`;
+}
+
+export function getGameMode() {
+  const mode = localStorage.getItem(STORAGE_KEYS.gameMode);
+  return mode === 'manual' ? 'manual' : 'gemini';
+}
+
+export function setGameMode(mode) {
+  localStorage.setItem(STORAGE_KEYS.gameMode, mode === 'manual' ? 'manual' : 'gemini');
+}
+
+export function getGeminiWordHistory() {
+  try {
+    const parsed = JSON.parse(localStorage.getItem(STORAGE_KEYS.geminiWordHistory) || '[]');
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
+export function addGeminiWordToHistory(word) {
+  const cleaned = word.trim();
+  if (!cleaned) return;
+  const history = getGeminiWordHistory().filter(
+    (w) => w.toLowerCase() !== cleaned.toLowerCase()
+  );
+  history.unshift(cleaned);
+  localStorage.setItem(
+    STORAGE_KEYS.geminiWordHistory,
+    JSON.stringify(history.slice(0, MAX_WORD_HISTORY))
+  );
 }
