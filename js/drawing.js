@@ -7,8 +7,6 @@ export class DrawingCanvas {
     this.lastY = 0;
     this.strokeColor = '#1a1a2e';
     this.lineWidth = 4;
-    this.mode = 'mouse';
-    this.handDrawingEnabled = false;
 
     this._resize();
     window.addEventListener('resize', () => this._resize());
@@ -59,13 +57,11 @@ export class DrawingCanvas {
 
   _bindMouseEvents() {
     this.canvas.addEventListener('mousedown', (e) => {
-      if (this.mode !== 'mouse') return;
       const { x, y } = this._getPos(e.clientX, e.clientY);
       this._startDraw(x, y);
     });
 
     this.canvas.addEventListener('mousemove', (e) => {
-      if (this.mode !== 'mouse') return;
       const { x, y } = this._getPos(e.clientX, e.clientY);
       this._drawTo(x, y);
     });
@@ -76,7 +72,6 @@ export class DrawingCanvas {
 
   _bindTouchEvents() {
     this.canvas.addEventListener('touchstart', (e) => {
-      if (this.mode !== 'mouse') return;
       e.preventDefault();
       const touch = e.touches[0];
       const { x, y } = this._getPos(touch.clientX, touch.clientY);
@@ -84,7 +79,6 @@ export class DrawingCanvas {
     }, { passive: false });
 
     this.canvas.addEventListener('touchmove', (e) => {
-      if (this.mode !== 'mouse') return;
       e.preventDefault();
       const touch = e.touches[0];
       const { x, y } = this._getPos(touch.clientX, touch.clientY);
@@ -92,29 +86,6 @@ export class DrawingCanvas {
     }, { passive: false });
 
     this.canvas.addEventListener('touchend', () => this._stopDraw());
-  }
-
-  setMode(mode) {
-    this.mode = mode;
-    this._stopDraw();
-  }
-
-  setHandDrawingEnabled(enabled) {
-    this.handDrawingEnabled = enabled;
-    if (!enabled) this._stopDraw();
-  }
-
-  moveHandPointer(clientX, clientY, shouldDraw) {
-    if (!this.handDrawingEnabled || this.mode !== 'hand') return;
-    const { x, y } = this._getPos(clientX, clientY);
-
-    if (shouldDraw && !this.isDrawing) {
-      this._startDraw(x, y);
-    } else if (shouldDraw) {
-      this._drawTo(x, y);
-    } else {
-      this._stopDraw();
-    }
   }
 
   clear() {

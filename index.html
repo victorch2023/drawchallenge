@@ -25,15 +25,11 @@
       <section class="challenge-panel card">
         <p class="label">Tu reto es dibujar:</p>
         <p id="keyword-display" class="keyword-display">—</p>
-        <p class="hint">Usa ratón, tacto o la cámara con tu mano.</p>
+        <p class="hint">Usa ratón o el tacto en pantalla.</p>
       </section>
 
       <section class="drawing-panel card">
         <div class="drawing-toolbar">
-          <div class="mode-toggle">
-            <button id="btn-mode-mouse" type="button" class="btn btn-toggle active">Ratón / Tacto</button>
-            <button id="btn-mode-hand" type="button" class="btn btn-toggle">Mano (cámara)</button>
-          </div>
           <div class="toolbar-actions">
             <button id="btn-clear" type="button" class="btn btn-secondary">Limpiar</button>
             <button id="btn-random" type="button" class="btn btn-secondary">Otra palabra</button>
@@ -41,14 +37,8 @@
           </div>
         </div>
 
-        <div id="canvas-wrapper" class="canvas-wrapper">
+        <div class="canvas-wrapper">
           <canvas id="drawing-canvas" aria-label="Lienzo de dibujo"></canvas>
-          <div id="hand-pointer" class="hand-pointer hidden" aria-hidden="true"></div>
-        </div>
-
-        <div class="webcam-container">
-          <video id="webcam" autoplay playsinline muted aria-label="Vista previa de cámara"></video>
-          <p class="webcam-hint">La cámara solo se usa en modo mano.</p>
         </div>
       </section>
 
