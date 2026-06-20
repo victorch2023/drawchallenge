@@ -13,17 +13,22 @@ Funciona **100 % en GitHub Pages**, sin Vercel ni backend. La API key de Gemini 
 
 ## Despliegue en GitHub Pages
 
-El repo ya está en GitHub. Solo falta **activar Pages** (una vez):
+### Paso 1 — Esperar el workflow verde
+
+Cada push a `main` ejecuta **Publicar GitHub Pages** (Actions). Cuando termine en verde, el sitio estará en la rama `gh-pages`.
+
+### Paso 2 — Configurar Pages (una sola vez)
 
 1. Abre **[Settings → Pages](https://github.com/victorch2023/drawchallenge/settings/pages)**
-2. **Build and deployment → Source:** elige **Deploy from a branch**
-3. **Branch:** `main` · carpeta **`/ (root)`**
-4. Pulsa **Save**
-5. Espera 1–2 minutos. La app quedará en:
+2. **Source:** **Deploy from a branch**
+3. **Branch:** **`gh-pages`** · carpeta **`/ (root)`**
+4. Pulsa **Save** (solo estará activo si cambiaste de `main` a `gh-pages`)
 
-   **https://victorch2023.github.io/drawchallenge/**
+Tu app quedará en:
 
-> Si ves un workflow de Actions en rojo, ignóralo: no hace falta Actions para este sitio estático. Pages publica directamente desde la rama `main`.
+**https://victorch2023.github.io/drawchallenge/**
+
+> El deployment en rojo *「Deploy GitHub Pages #1」* es del workflow antiguo (ya eliminado). Ignóralo.
 
 Cada `git push` a `main` actualiza el sitio automáticamente.
 
