@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Panel de control — Draw Challenge</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,600;0,9..40,700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <div class="app-shell admin-shell">
+    <header class="app-header">
+      <div>
+        <p class="eyebrow">Draw Challenge</p>
+        <h1>Panel de control</h1>
+      </div>
+      <nav class="nav-links">
+        <a href="index.html" class="nav-link">Ir a dibujar</a>
+      </nav>
+    </header>
+
+    <main class="admin-layout">
+      <section class="card">
+        <h2>Palabra activa</h2>
+        <p class="active-keyword" id="active-keyword">—</p>
+        <p class="hint">Los cambios se guardan en este navegador y se reflejan en la pantalla de dibujo.</p>
+      </section>
+
+      <section class="card">
+        <h2>Palabras clave</h2>
+        <div class="add-keyword-row">
+          <input
+            id="keyword-input"
+            type="text"
+            placeholder="Ej: árbol, perro, montaña…"
+            autocomplete="off"
+          >
+          <button id="btn-add" type="button" class="btn btn-primary">Añadir</button>
+        </div>
+        <ul id="keyword-list" class="keyword-list"></ul>
+      </section>
+
+      <section class="card" id="gemini-config">
+        <h2>Gemini (gratis, en tu navegador)</h2>
+        <p class="hint">
+          La API key se guarda solo en <strong>este dispositivo</strong> (localStorage), igual que en registro financiero.
+          No se sube a GitHub.
+        </p>
+        <p id="gemini-key-status" class="key-status missing">No configurada</p>
+        <div class="api-row">
+          <input
+            id="gemini-api-key"
+            type="password"
+            placeholder="Pega tu API key (AIza… o AQ.…)"
+            autocomplete="off"
+          >
+          <button id="btn-save-gemini" type="button" class="btn btn-primary">Guardar key</button>
+        </div>
+        <div class="model-row">
+          <label for="gemini-model">Modelo</label>
+          <select id="gemini-model">
+            <option value="gemini-2.5-flash">gemini-2.5-flash (recomendado)</option>
+            <option value="gemini-2.5-flash-lite">gemini-2.5-flash-lite</option>
+            <option value="gemini-2.0-flash">gemini-2.0-flash</option>
+          </select>
+        </div>
+        <button id="btn-clear-gemini" type="button" class="btn btn-secondary">Eliminar key</button>
+        <p class="hint small">
+          ¿Cómo obtener una key gratis? Sigue la guía al final del <code>README.md</code>.
+        </p>
+      </section>
+    </main>
+
+    <p id="admin-status" class="status-message" role="status" aria-live="polite"></p>
+  </div>
+
+  <script type="module" src="js/admin.js"></script>
+</body>
+</html>
