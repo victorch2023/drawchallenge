@@ -11,6 +11,7 @@ import {
   maskGeminiApiKey,
 } from './storage.js';
 import { hasGeminiApiKey, validateGeminiApiKey } from './evaluate.js';
+import { refreshQuotaDisplay } from './quotaUi.js';
 
 const keywordInput = document.getElementById('keyword-input');
 const btnAdd = document.getElementById('btn-add');
@@ -21,6 +22,7 @@ const geminiModelSelect = document.getElementById('gemini-model');
 const btnSaveGemini = document.getElementById('btn-save-gemini');
 const btnClearGemini = document.getElementById('btn-clear-gemini');
 const geminiStatus = document.getElementById('gemini-key-status');
+const adminQuotaEl = document.getElementById('admin-quota-display');
 const statusEl = document.getElementById('admin-status');
 
 function showStatus(message, type = 'info') {
@@ -32,9 +34,12 @@ function renderGeminiStatus() {
   if (hasGeminiApiKey()) {
     geminiStatus.textContent = `Configurada: ${maskGeminiApiKey(getGeminiApiKey())}`;
     geminiStatus.className = 'key-status configured';
+    adminQuotaEl.hidden = false;
+    refreshQuotaDisplay(adminQuotaEl);
   } else {
     geminiStatus.textContent = 'No configurada';
     geminiStatus.className = 'key-status missing';
+    adminQuotaEl.hidden = true;
   }
 }
 

@@ -8,6 +8,7 @@ import {
 import { DrawingCanvas } from './drawing.js';
 import { evaluateDrawing, hasGeminiApiKey } from './evaluate.js';
 import { suggestDrawingWord } from './wordSuggest.js';
+import { refreshQuotaDisplay } from './quotaUi.js';
 
 const canvas = document.getElementById('drawing-canvas');
 const keywordEl = document.getElementById('keyword-display');
@@ -16,6 +17,7 @@ const resultPanel = document.getElementById('result-panel');
 const resultScore = document.getElementById('result-score');
 const resultReason = document.getElementById('result-reason');
 const statusEl = document.getElementById('status-message');
+const quotaEl = document.getElementById('quota-display');
 
 const btnClear = document.getElementById('btn-clear');
 const btnSubmit = document.getElementById('btn-submit');
@@ -31,6 +33,15 @@ let loadingWord = false;
 function showStatus(message, type = 'info') {
   statusEl.textContent = message;
   statusEl.className = `status-message ${type}`;
+}
+
+function updateQuotaUi() {
+  if (!hasGeminiApiKey()) {
+    quotaEl.hidden = true;
+    return;
+  }
+  quotaEl.hidden = false;
+  refreshQuotaDisplay(quotaEl);
 }
 
 function setWordHint(text) {
@@ -94,6 +105,7 @@ async function assignNewWord() {
       showStatus(err.message, 'error');
     } finally {
       setLoadingWord(false);
+      updateQuotaUi();
     }
     return;
   }
@@ -144,6 +156,7 @@ btnSubmit.addEventListener('click', async () => {
     showStatus(err.message, 'error');
   } finally {
     btnSubmit.disabled = false;
+    updateQuotaUi();
   }
 });
 
@@ -157,11 +170,13 @@ window.addEventListener('storage', (e) => {
     gameMode = getGameMode();
     updateModeUi();
     refreshKeywordDisplay();
+    updateQuotaUi();
   }
 });
 
 updateModeUi();
 refreshKeywordDisplay();
+updateQuotaUi();
 
 if (!hasGeminiApiKey()) {
   showStatus('Configura tu API key de Gemini en el panel de control.', 'error');
