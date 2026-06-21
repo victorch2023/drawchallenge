@@ -6,7 +6,7 @@ export class DrawingCanvas {
     this.lastX = 0;
     this.lastY = 0;
     this.strokeColor = '#1a1a2e';
-    this.lineWidth = 3.6;
+    this.lineWidth = 3.78;
 
     this._resize();
     this._observeResize();
