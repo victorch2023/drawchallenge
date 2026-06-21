@@ -2,6 +2,7 @@ import {
   getGeminiApiKey,
   getGeminiModel,
   clearGeminiApiKey,
+  recordGeminiUsage,
 } from './storage.js';
 
 export const FALLBACK_MODELS = ['gemini-2.5-flash', 'gemini-2.5-flash-lite', 'gemini-2.0-flash'];
@@ -109,6 +110,7 @@ export async function callGeminiJson({ prompt, schema, imageBase64, tools, tempe
       const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
       if (!text) throw new Error('Gemini no devolvió contenido.');
 
+      recordGeminiUsage();
       return JSON.parse(text);
     } catch (err) {
       if (isQuotaError(err)) {

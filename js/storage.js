@@ -5,11 +5,27 @@ const STORAGE_KEYS = {
   geminiModel: 'drawchallenge_gemini_model',
   gameMode: 'drawchallenge_game_mode',
   geminiWordHistory: 'drawchallenge_gemini_word_history',
+  geminiDailyUsage: 'drawchallenge_gemini_daily_usage',
+  geminiDailyLimit: 'drawchallenge_gemini_daily_limit',
 };
 
 const DEFAULT_KEYWORDS = ['árbol', 'casa', 'sol', 'gato', 'coche', 'flor'];
 const DEFAULT_GEMINI_MODEL = 'gemini-2.5-flash';
 const MAX_WORD_HISTORY = 40;
+
+/** Cuota diaria estimada del tier gratuito (RPD) por modelo. */
+const DEFAULT_DAILY_LIMITS = {
+  'gemini-2.5-flash': 1500,
+  'gemini-2.5-flash-lite': 1500,
+  'gemini-2.0-flash': 200,
+  default: 1500,
+};
+
+function getPacificDateKey() {
+  return new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'America/Los_Angeles',
+  }).format(new Date());
+}
 
 export function getKeywords() {
   const stored = localStorage.getItem(STORAGE_KEYS.keywords);
@@ -109,4 +125,60 @@ export function addGeminiWordToHistory(word) {
     STORAGE_KEYS.geminiWordHistory,
     JSON.stringify(history.slice(0, MAX_WORD_HISTORY))
   );
+}
+
+export function getGeminiDailyLimit() {
+  const custom = Number(localStorage.getItem(STORAGE_KEYS.geminiDailyLimit));
+  if (custom > 0) return Math.round(custom);
+
+  const model = getGeminiModel();
+  return DEFAULT_DAILY_LIMITS[model] ?? DEFAULT_DAILY_LIMITS.default;
+}
+
+export function setGeminiDailyLimit(limit) {
+  const n = Math.round(Number(limit));
+  if (n > 0) {
+    localStorage.setItem(STORAGE_KEYS.geminiDailyLimit, String(n));
+  } else {
+    localStorage.removeItem(STORAGE_KEYS.geminiDailyLimit);
+  }
+}
+
+function readDailyUsageRecord() {
+  try {
+    return JSON.parse(localStorage.getItem(STORAGE_KEYS.geminiDailyUsage) || '{}');
+  } catch {
+    return {};
+  }
+}
+
+export function getGeminiUsageToday() {
+  const today = getPacificDateKey();
+  const record = readDailyUsageRecord();
+  if (record.date !== today) return 0;
+  return Number(record.count) || 0;
+}
+
+export function recordGeminiUsage() {
+  const today = getPacificDateKey();
+  const record = readDailyUsageRecord();
+  const count = record.date === today ? (Number(record.count) || 0) + 1 : 1;
+  localStorage.setItem(
+    STORAGE_KEYS.geminiDailyUsage,
+    JSON.stringify({ date: today, count })
+  );
+  return count;
+}
+
+export function getGeminiQuotaSummary() {
+  const used = getGeminiUsageToday();
+  const limit = getGeminiDailyLimit();
+  const remaining = Math.max(0, limit - used);
+  return {
+    used,
+    limit,
+    remaining,
+    dateKey: getPacificDateKey(),
+    isEstimate: true,
+  };
 }

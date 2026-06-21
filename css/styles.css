@@ -246,8 +246,9 @@ h2 {
 
 .result-reason {
   margin: 0;
-  font-size: 1.05rem;
-  line-height: 1.5;
+  font-size: 0.95rem;
+  line-height: 1.35;
+  font-style: italic;
 }
 
 .status-message {
@@ -395,6 +396,44 @@ code {
   padding-bottom: 0.35rem;
 }
 
+.topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex-shrink: 0;
+}
+
+.quota-badge {
+  margin: 0;
+  padding: 0.35rem 0.55rem;
+  font-size: 0.68rem;
+  font-weight: 600;
+  line-height: 1.2;
+  color: var(--muted);
+  background: #f0ebe3;
+  border-radius: 999px;
+  white-space: nowrap;
+  max-width: 11rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.quota-badge.quota-low {
+  background: #fff0e6;
+  color: var(--accent);
+}
+
+.quota-badge.quota-empty {
+  background: #fff5f5;
+  color: var(--error);
+}
+
+.quota-badge-block {
+  display: inline-block;
+  max-width: none;
+  margin-bottom: 0.75rem;
+}
+
 .topbar-title .eyebrow {
   margin: 0;
   font-size: 0.78rem;
@@ -527,6 +566,11 @@ code {
 }
 
 @media (max-width: 640px) {
+  .quota-badge {
+    max-width: 7.5rem;
+    font-size: 0.62rem;
+  }
+
   .drawing-toolbar {
     flex-direction: column;
     align-items: stretch;
