@@ -43,13 +43,35 @@
       </section>
 
       <section class="card" id="gemini-config">
-        <h2>Gemini (gratis, en tu navegador)</h2>
+        <h2>Gemini</h2>
         <p class="hint">
-          La API key se guarda solo en <strong>este dispositivo</strong> (localStorage), igual que en registro financiero.
+          La API key se guarda solo en <strong>este dispositivo</strong> (localStorage).
           No se sube a GitHub.
         </p>
         <p id="gemini-key-status" class="key-status missing">No configurada</p>
-        <p id="admin-quota-display" class="quota-badge quota-badge-block" hidden>Gemini hoy: —</p>
+        <pre id="admin-quota-display" class="quota-detail" hidden aria-live="polite">—</pre>
+        <div class="model-row">
+          <label for="gemini-proxy-url">Proxy Vercel</label>
+          <input
+            id="gemini-proxy-url"
+            type="url"
+            placeholder="https://drawchallenge.vercel.app/api/gemini"
+          >
+        </div>
+        <p class="hint small">
+          Opción B: el proxy lee la cuota real de Google. Sin proxy, solo verás el contador local (opción A).
+        </p>
+        <div class="model-row">
+          <label for="gemini-daily-limit">Límite local est.</label>
+          <input
+            id="gemini-daily-limit"
+            type="number"
+            min="1"
+            step="1"
+            placeholder="Auto según modelo"
+          >
+        </div>
+        <p class="hint small">Solo para el contador local si no hay datos del proxy. Déjalo vacío para usar el valor del modelo.</p>
         <div class="api-row">
           <input
             id="gemini-api-key"
@@ -57,7 +79,7 @@
             placeholder="Pega tu API key (AIza… o AQ.…)"
             autocomplete="off"
           >
-          <button id="btn-save-gemini" type="button" class="btn btn-primary">Guardar key</button>
+          <button id="btn-save-gemini" type="button" class="btn btn-primary">Guardar</button>
         </div>
         <div class="model-row">
           <label for="gemini-model">Modelo</label>
