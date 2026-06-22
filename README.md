@@ -2,7 +2,7 @@
 
 Juego de dibujo personal: intentas representar una palabra clave y **Gemini** evalúa qué tan bien lo lograste (puntuación del 1 al 10).
 
-Funciona **100 % en GitHub Pages**, sin Vercel ni backend. La API key de Gemini se guarda en tu navegador (como en registro financiero).
+El frontend vive en **GitHub Pages**. Las llamadas a Gemini pueden ir **directas desde el navegador** o a través de un **proxy Vercel** opcional que expone la cuota real de Google.
 
 ## Funciones
 
@@ -10,7 +10,8 @@ Funciona **100 % en GitHub Pages**, sin Vercel ni backend. La API key de Gemini 
 - Modo **Gemini elige**: propone palabras dibujables (estilo Pictionary / juegos de mesa)
 - Modo **Mi lista**: palabras del panel de control
 - Botón **Entregar** → Gemini puntúa del 1 al 10
-- **Panel de control** (`admin.html`) para API key y lista personal
+- **Panel de control** (`admin.html`) para API key, proxy y lista personal
+- **Contador de cuota** (opción A: local honesto + opción B: cuota Google vía proxy)
 
 ## Despliegue en GitHub Pages
 
@@ -23,13 +24,11 @@ Cada push a `main` ejecuta **Publicar GitHub Pages** (Actions). Cuando termine e
 1. Abre **[Settings → Pages](https://github.com/victorch2023/drawchallenge/settings/pages)**
 2. **Source:** **Deploy from a branch**
 3. **Branch:** **`gh-pages`** · carpeta **`/ (root)`**
-4. Pulsa **Save** (solo estará activo si cambiaste de `main` a `gh-pages`)
+4. Pulsa **Save**
 
 Tu app quedará en:
 
 **https://victorch2023.github.io/drawchallenge/**
-
-> El deployment en rojo *「Deploy GitHub Pages #1」* es del workflow antiguo (ya eliminado). Ignóralo.
 
 Cada `git push` a `main` actualiza el sitio automáticamente.
 
@@ -42,43 +41,74 @@ npm start
 
 ---
 
-## Guía: crear una API key gratuita de Gemini
+## Cuota de Gemini: opción A y opción B
 
-Sigue estos pasos **una sola vez** (tarda ~2 minutos):
+Google limita las llamadas por minuto (RPM) y por día (RPD). El navegador **no puede leer** los headers de cuota de Google por CORS si llamas directo a la API.
+
+### Opción A — Contador local (siempre activo)
+
+Sin configurar nada extra, la app cuenta:
+
+- **Llamadas hoy** en Draw Challenge (reinicio a medianoche, hora del Pacífico)
+- **Ritmo por minuto** local según el modelo elegido
+- **Estimado diario** basado en los límites orientativos del tier gratuito
+
+El badge en `index.html` muestra algo como `23 hoy · 2/15 min`. En el panel de control verás el desglose completo.
+
+> Este contador mide **solo esta app en este navegador**. Si conoces tu cuota real en AI Studio, puedes ajustar el campo «Límite local est.» en el panel.
+
+### Opción B — Proxy Vercel (cuota real de Google)
+
+Una función serverless en Vercel llama a Gemini por ti y devuelve los headers `x-ratelimit-*` de Google. La app muestra entonces algo como `Google: 47/50 · 23 aquí`.
+
+#### 1. Desplegar el proxy en Vercel
+
+1. Crea cuenta en [vercel.com](https://vercel.com) e importa el repo `victorch2023/drawchallenge`
+2. En **Settings → Environment Variables**, añade:
+
+| Variable | Valor |
+|----------|--------|
+| `ALLOWED_ORIGINS` | `https://victorch2023.github.io,http://localhost:8080,http://localhost:3000` |
+| `GEMINI_API_KEY` | *(opcional)* Si la dejas vacía, la app envía la key desde el panel |
+
+3. Pulsa **Deploy**. La URL del proxy será algo como:
+
+`https://tu-proyecto.vercel.app/api/gemini`
+
+#### 2. Configurar en Draw Challenge
+
+1. Abre **`admin.html`**
+2. En **Proxy Vercel**, pega la URL anterior (sin barra final)
+3. Pulsa **Guardar**
+
+Si el proxy falla por un error no relacionado con cuota, la app vuelve automáticamente a la llamada directa.
+
+---
+
+## Guía: crear una API key gratuita de Gemini
 
 ### 1. Entra en Google AI Studio
 
 Abre: **[https://aistudio.google.com/apikey](https://aistudio.google.com/apikey)**
 
-Inicia sesión con tu cuenta de Google.
+### 2. Genera la API key
 
-### 2. Crea un proyecto (si te lo pide)
+1. Pulsa **Create API key**
+2. Elige un proyecto (por ejemplo `drawchallenge`)
+3. Copia la clave (`AIza…` o `AQ.…`)
 
-Google puede pedirte un nombre de proyecto. Cualquier nombre vale, por ejemplo `drawchallenge-personal`.
+### 3. Configúrala en Draw Challenge
 
-### 3. Genera la API key
+1. Abre **`admin.html`**
+2. Pega la API key y elige **`gemini-2.5-flash`**
+3. *(Opcional)* Pega la URL del proxy Vercel
+4. Pulsa **Guardar**
 
-1. Pulsa **「Create API key」** / **「Crear clave de API」**
-2. Elige **Create key in new project** (proyecto nuevo) o un proyecto existente
-3. Copia la clave. Empieza por **`AIza…`** o **`AQ.…`**
-
-> Guarda la clave en un gestor de contraseñas. Google no siempre la vuelve a mostrar completa.
-
-### 4. Configúrala en Draw Challenge
-
-1. Abre **`admin.html`** en tu app (local o GitHub Pages)
-2. En la sección **Gemini**, pega la API key
-3. Deja el modelo **`gemini-2.5-flash`** (recomendado, gratis con cuota diaria)
-4. Pulsa **Guardar key**
-
-Deberías ver: *「Configurada: AIza…xxxx」*
-
-### 5. Prueba
+### 4. Prueba
 
 1. Ve a **`index.html`**
-2. Dibuja la palabra que aparece (por ejemplo «árbol»)
+2. Dibuja la palabra que aparece
 3. Pulsa **Entregar dibujo**
-4. Gemini devuelve una puntuación del 1 al 10 y una breve explicación
 
 ---
 
@@ -87,30 +117,31 @@ Deberías ver: *「Configurada: AIza…xxxx」*
 | Concepto | Detalle |
 |----------|---------|
 | **Costo** | $0 en el tier gratuito |
-| **Modelo recomendado** | `gemini-2.5-flash` (visión + texto) |
-| **Cuota** | Limitada por día (suficiente para uso personal) |
+| **Modelo recomendado** | `gemini-2.5-flash` |
+| **Cuota** | Limitada por día y por minuto |
 | **Tarjeta** | No obligatoria para empezar en AI Studio |
-| **Misma key en otra app** | Sí, pero compartís cuota y riesgo si se filtra |
 
-Si ves *「Cuota agotada」*, espera unos minutos o al día siguiente.
+Si ves *«Cuota agotada»* o *«Límite por minuto»*, espera unos segundos o al día siguiente.
 
 ---
 
 ## Privacidad y seguridad
 
 - La API key vive en **localStorage** de tu navegador; no va al repo de GitHub.
-- Cada dibujo se envía **directamente a Google** al pulsar Entregar.
-- Es una app **personal**: no compartas la URL con la key ya configurada en un dispositivo compartido.
+- Con proxy: la key viaja cifrada (HTTPS) al servidor Vercel y de ahí a Google. Puedes omitir `GEMINI_API_KEY` en Vercel y enviarla solo desde el navegador.
+- Cada dibujo se envía a Google al pulsar Entregar.
 
 ---
 
 ## Estructura
 
 ```
-index.html    → Dibujar y evaluar
-admin.html    → Palabras clave + API key
-js/           → Lógica (Gemini directo desde el navegador)
-css/          → Estilos
+index.html      → Dibujar y evaluar
+admin.html      → Palabras clave + Gemini + proxy
+js/             → Lógica del cliente
+api/gemini.js   → Proxy Vercel (opción B)
+css/            → Estilos
+vercel.json     → Configuración Vercel
 ```
 
 ## Solución de problemas
@@ -118,6 +149,8 @@ css/          → Estilos
 | Problema | Qué hacer |
 |----------|-----------|
 | «Configura tu API key…» | Ve a `admin.html` y guarda la key |
-| «API key rechazada» | Crea una key nueva en AI Studio y vuelve a guardarla |
-| «Cuota agotada» | Espera o usa otro modelo Flash en el panel |
-| Palabra no cambia | Configúrala en `admin.html` o pulsa «Otra palabra» |
+| «API key rechazada» | Crea una key nueva en AI Studio |
+| «Límite por minuto» | Espera 30–60 s y reintenta |
+| «Cuota diaria agotada» | Espera al reinicio (medianoche Pacífico) o revisa AI Studio |
+| Badge muestra muchos restantes pero Google bloquea | Activa el proxy Vercel (opción B) para ver la cuota real |
+| Proxy no devuelve cuota Google | Normal en algunas respuestas; el contador local sigue activo |

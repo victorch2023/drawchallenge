@@ -8,6 +8,9 @@ import {
   clearGeminiApiKey,
   getGeminiModel,
   setGeminiModel,
+  setGeminiDailyLimit,
+  setGeminiProxyUrl,
+  getGeminiProxyUrl,
   maskGeminiApiKey,
 } from './storage.js';
 import { hasGeminiApiKey, validateGeminiApiKey } from './evaluate.js';
@@ -19,6 +22,8 @@ const keywordList = document.getElementById('keyword-list');
 const activeDisplay = document.getElementById('active-keyword');
 const geminiKeyInput = document.getElementById('gemini-api-key');
 const geminiModelSelect = document.getElementById('gemini-model');
+const geminiDailyLimitInput = document.getElementById('gemini-daily-limit');
+const geminiProxyUrlInput = document.getElementById('gemini-proxy-url');
 const btnSaveGemini = document.getElementById('btn-save-gemini');
 const btnClearGemini = document.getElementById('btn-clear-gemini');
 const geminiStatus = document.getElementById('gemini-key-status');
@@ -116,12 +121,19 @@ keywordInput.addEventListener('keydown', (e) => {
 
 btnSaveGemini.addEventListener('click', () => {
   try {
-    const key = validateGeminiApiKey(geminiKeyInput.value);
-    setGeminiApiKey(key);
+    const rawKey = geminiKeyInput.value.trim();
+    if (rawKey) {
+      setGeminiApiKey(validateGeminiApiKey(rawKey));
+    } else if (!hasGeminiApiKey()) {
+      throw new Error('Falta la API key de Gemini.');
+    }
     if (geminiModelSelect.value) setGeminiModel(geminiModelSelect.value);
+    setGeminiProxyUrl(geminiProxyUrlInput.value);
+    const limitRaw = geminiDailyLimitInput.value.trim();
+    setGeminiDailyLimit(limitRaw ? Number(limitRaw) : 0);
     geminiKeyInput.value = '';
     renderGeminiStatus();
-    showStatus('API key de Gemini guardada en este navegador.', 'success');
+    showStatus('Configuración de Gemini guardada.', 'success');
   } catch (err) {
     showStatus(err.message, 'error');
   }
@@ -134,6 +146,13 @@ btnClearGemini.addEventListener('click', () => {
   showStatus('API key eliminada de este navegador.', 'success');
 });
 
+geminiModelSelect.addEventListener('change', () => {
+  renderGeminiStatus();
+});
+
 geminiModelSelect.value = getGeminiModel();
+geminiProxyUrlInput.value = getGeminiProxyUrl();
+const savedLimit = localStorage.getItem('drawchallenge_gemini_daily_limit');
+if (savedLimit) geminiDailyLimitInput.value = savedLimit;
 renderGeminiStatus();
 renderKeywords();

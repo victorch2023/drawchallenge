@@ -363,7 +363,8 @@ code {
   color: var(--muted);
 }
 
-.model-row select {
+.model-row select,
+.model-row input[type='number'] {
   flex: 1;
   font: inherit;
   padding: 0.65rem 0.85rem;
@@ -426,6 +427,44 @@ code {
 .quota-badge.quota-empty {
   background: #fff5f5;
   color: var(--error);
+}
+
+.quota-badge.quota-rpm-warn {
+  background: #fff8e6;
+  color: #b45309;
+}
+
+.quota-detail {
+  margin: 0 0 1rem;
+  padding: 0.85rem 1rem;
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  line-height: 1.45;
+  white-space: pre-wrap;
+  color: var(--ink);
+  background: #f7f4ef;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+
+.quota-detail.quota-empty {
+  border-color: #f5c2c7;
+  background: #fff5f5;
+}
+
+.quota-badge.quota-google {
+  background: #e8f5f1;
+  color: var(--success);
+}
+
+.quota-detail.quota-google {
+  border-color: #9fd4c4;
+  background: #f0faf7;
+}
+
+.quota-detail.quota-rpm-warn {
+  border-color: #fcd34d;
+  background: #fffbeb;
 }
 
 .quota-badge-block {
