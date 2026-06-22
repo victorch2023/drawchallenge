@@ -73,7 +73,11 @@ Una función serverless en Vercel llama a Gemini por ti y devuelve los headers `
 
 3. Pulsa **Deploy**. La URL del proxy será algo como:
 
-`https://tu-proyecto.vercel.app/api/gemini`
+`https://drawchallenge-victorch2023s-projects.vercel.app/api/gemini`
+
+(Vercel → proyecto **drawchallenge** → **Settings → Domains**)
+
+4. En **Settings → Deployment Protection**, desactiva **Vercel Authentication** para Production (o pon «Only Preview Deployments»). Si no, el navegador recibirá 401 y el proxy no funcionará.
 
 #### 2. Configurar en Draw Challenge
 
@@ -153,4 +157,5 @@ vercel.json     → Configuración Vercel
 | «Límite por minuto» | Espera 30–60 s y reintenta |
 | «Cuota diaria agotada» | Espera al reinicio (medianoche Pacífico) o revisa AI Studio |
 | Badge muestra muchos restantes pero Google bloquea | Activa el proxy Vercel (opción B) para ver la cuota real |
-| Proxy no devuelve cuota Google | Normal en algunas respuestas; el contador local sigue activo |
+| Proxy devuelve 401 / «Authentication Required» | Desactiva Vercel Authentication en Settings → Deployment Protection |
+| `drawchallenge.vercel.app` no es tu proyecto | Usa la URL de **tu** proyecto en Settings → Domains |
