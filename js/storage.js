@@ -15,7 +15,8 @@ const STORAGE_KEYS = {
 
 const DEFAULT_KEYWORDS = ['árbol', 'casa', 'sol', 'gato', 'coche', 'flor'];
 const DEFAULT_GEMINI_MODEL = 'gemini-2.5-flash';
-const DEFAULT_PROXY_URL = 'https://drawchallenge.vercel.app/api/gemini';
+const DEFAULT_PROXY_URL =
+  'https://drawchallenge-victorch2023s-projects.vercel.app/api/gemini';
 const MAX_WORD_HISTORY = 40;
 
 /**
