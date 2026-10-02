@@ -6,7 +6,7 @@ const STORAGE_KEYS = {
 };
 
 const DEFAULT_KEYWORDS = ['árbol', 'casa', 'sol', 'gato', 'coche', 'flor'];
-const MAX_WORD_HISTORY = 40;
+const MAX_WORD_HISTORY = 200;
 
 export function getKeywords() {
   const stored = localStorage.getItem(STORAGE_KEYS.keywords);
