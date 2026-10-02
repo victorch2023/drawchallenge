@@ -8,8 +8,7 @@ const STORAGE_KEYS = {
 };
 
 const DEFAULT_KEYWORDS = ['árbol', 'casa', 'sol', 'gato', 'coche', 'flor'];
-const DEFAULT_ANALYTICS_API =
-  'https://drawchallenge-victorch2023s-projects.vercel.app';
+const DEFAULT_ANALYTICS_API = 'https://drawchallenge-five.vercel.app';
 const MAX_WORD_HISTORY = 200;
 
 export function getKeywords() {
