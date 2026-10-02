@@ -41,6 +41,11 @@ body {
     var(--bg);
 }
 
+/* Quita hide-optional-controls del <body> en index.html para volver a mostrar Panel, modos y Otra al azar */
+body.hide-optional-controls .ui-optional {
+  display: none !important;
+}
+
 .app-shell {
   max-width: 1100px;
   margin: 0 auto;

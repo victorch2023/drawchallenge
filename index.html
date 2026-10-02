@@ -11,7 +11,7 @@
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,600;0,9..40,700;1,9..40,400&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/styles.css">
 </head>
-<body class="game-page">
+<body class="game-page hide-optional-controls">
   <div class="game-shell">
     <header class="game-topbar">
       <div class="topbar-title">
@@ -19,7 +19,7 @@
       </div>
       <div class="topbar-actions">
         <p id="model-status" class="quota-badge" aria-live="polite">Jurado local</p>
-        <a href="admin.html" class="nav-link nav-link-compact">Panel</a>
+        <a href="admin.html" class="nav-link nav-link-compact ui-optional">Panel</a>
       </div>
     </header>
 
@@ -29,7 +29,7 @@
         <p id="keyword-display" class="keyword-display">—</p>
         <p id="word-hint" class="word-hint" hidden></p>
       </div>
-      <div class="mode-switch" role="group" aria-label="Modo de juego">
+      <div class="mode-switch ui-optional" role="group" aria-label="Modo de juego">
         <button id="btn-mode-local" type="button" class="btn btn-mode active">Al azar</button>
         <button id="btn-mode-manual" type="button" class="btn btn-mode">Mi lista</button>
       </div>
@@ -43,7 +43,7 @@
 
     <footer class="game-dock">
       <div class="toolbar-actions">
-        <button id="btn-new-word" type="button" class="btn btn-secondary">Nueva palabra</button>
+        <button id="btn-new-word" type="button" class="btn btn-secondary">Otra al azar</button>
         <button id="btn-clear" type="button" class="btn btn-secondary">Limpiar</button>
         <button id="btn-submit" type="button" class="btn btn-primary">Entregar</button>
       </div>
