@@ -414,7 +414,7 @@ code {
   background: #f0ebe3;
   border-radius: 999px;
   white-space: nowrap;
-  max-width: 11rem;
+  max-width: 14rem;
   overflow: hidden;
   text-overflow: ellipsis;
 }
@@ -452,9 +452,14 @@ code {
   background: #fff5f5;
 }
 
-.quota-badge.quota-google {
+.quota-badge.model-ready {
   background: #e8f5f1;
   color: var(--success);
+}
+
+.quota-badge.model-downloading {
+  background: #fff8e6;
+  color: #b45309;
 }
 
 .quota-detail.quota-google {

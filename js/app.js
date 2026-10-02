@@ -6,9 +6,9 @@ import {
   setGameMode,
 } from './storage.js';
 import { DrawingCanvas } from './drawing.js';
-import { evaluateDrawing, hasGeminiApiKey } from './evaluate.js';
+import { evaluateDrawing } from './evaluate.js';
 import { suggestDrawingWord } from './wordSuggest.js';
-import { refreshQuotaDisplay } from './quotaUi.js';
+import { onModelStatus, preloadModel } from './localModel.js';
 
 const canvas = document.getElementById('drawing-canvas');
 const keywordEl = document.getElementById('keyword-display');
@@ -17,31 +17,23 @@ const resultPanel = document.getElementById('result-panel');
 const resultScore = document.getElementById('result-score');
 const resultReason = document.getElementById('result-reason');
 const statusEl = document.getElementById('status-message');
-const quotaEl = document.getElementById('quota-display');
+const modelStatusEl = document.getElementById('model-status');
 
 const btnClear = document.getElementById('btn-clear');
 const btnSubmit = document.getElementById('btn-submit');
 const btnNewWord = document.getElementById('btn-new-word');
 const btnNextRound = document.getElementById('btn-next-round');
-const btnModeGemini = document.getElementById('btn-mode-gemini');
+const btnModeLocal = document.getElementById('btn-mode-local');
 const btnModeManual = document.getElementById('btn-mode-manual');
 
 const drawing = new DrawingCanvas(canvas);
 let gameMode = getGameMode();
 let loadingWord = false;
+let busy = false;
 
 function showStatus(message, type = 'info') {
   statusEl.textContent = message;
   statusEl.className = `status-message ${type}`;
-}
-
-function updateQuotaUi() {
-  if (!hasGeminiApiKey()) {
-    quotaEl.hidden = true;
-    return;
-  }
-  quotaEl.hidden = false;
-  refreshQuotaDisplay(quotaEl);
 }
 
 function setWordHint(text) {
@@ -59,9 +51,9 @@ function refreshKeywordDisplay() {
 }
 
 function updateModeUi() {
-  btnModeGemini.classList.toggle('active', gameMode === 'gemini');
+  btnModeLocal.classList.toggle('active', gameMode === 'local');
   btnModeManual.classList.toggle('active', gameMode === 'manual');
-  btnNewWord.textContent = gameMode === 'gemini' ? 'Otra de Gemini' : 'Otra de mi lista';
+  btnNewWord.textContent = gameMode === 'local' ? 'Otra de la IA' : 'Otra de mi lista';
 }
 
 function hideResult() {
@@ -74,26 +66,24 @@ function showResult(score, reason) {
   resultPanel.hidden = false;
 }
 
-function setLoadingWord(isLoading) {
-  loadingWord = isLoading;
-  btnNewWord.disabled = isLoading;
-  btnModeGemini.disabled = isLoading;
-  btnModeManual.disabled = isLoading;
+function setBusy(isBusy) {
+  busy = isBusy;
+  loadingWord = isBusy;
+  btnNewWord.disabled = isBusy;
+  btnModeLocal.disabled = isBusy;
+  btnModeManual.disabled = isBusy;
+  btnSubmit.disabled = isBusy;
 }
 
 async function assignNewWord() {
   hideResult();
   drawing.clear();
 
-  if (gameMode === 'gemini') {
-    if (!hasGeminiApiKey()) {
-      showStatus('Configura tu API key en el panel de control.', 'error');
-      return;
-    }
-    setLoadingWord(true);
+  if (gameMode === 'local') {
+    setBusy(true);
     keywordEl.textContent = '…';
     setWordHint('');
-    showStatus('Gemini está eligiendo una palabra dibujable…');
+    showStatus('La IA está eligiendo una palabra dibujable…');
     try {
       const { word, hint } = await suggestDrawingWord();
       setActiveKeyword(word);
@@ -104,8 +94,7 @@ async function assignNewWord() {
       refreshKeywordDisplay();
       showStatus(err.message, 'error');
     } finally {
-      setLoadingWord(false);
-      updateQuotaUi();
+      setBusy(false);
     }
     return;
   }
@@ -117,7 +106,7 @@ async function assignNewWord() {
 }
 
 function switchMode(mode) {
-  if (mode === gameMode || loadingWord) return;
+  if (mode === gameMode || busy) return;
   gameMode = mode;
   setGameMode(mode);
   updateModeUi();
@@ -138,14 +127,9 @@ btnSubmit.addEventListener('click', async () => {
     return;
   }
 
-  if (!hasGeminiApiKey()) {
-    showStatus('Configura tu API key en el panel de control.', 'error');
-    return;
-  }
-
   const keyword = getActiveKeyword();
-  btnSubmit.disabled = true;
-  showStatus('Gemini está evaluando tu dibujo…');
+  setBusy(true);
+  showStatus('El jurado está mirando tu dibujo…');
 
   try {
     const imageBase64 = drawing.toPNGBase64();
@@ -155,33 +139,31 @@ btnSubmit.addEventListener('click', async () => {
   } catch (err) {
     showStatus(err.message, 'error');
   } finally {
-    btnSubmit.disabled = false;
-    updateQuotaUi();
+    setBusy(false);
   }
 });
 
 btnNewWord.addEventListener('click', () => assignNewWord());
 btnNextRound.addEventListener('click', () => assignNewWord());
-btnModeGemini.addEventListener('click', () => switchMode('gemini'));
+btnModeLocal.addEventListener('click', () => switchMode('local'));
 btnModeManual.addEventListener('click', () => switchMode('manual'));
 
-window.addEventListener('storage', (e) => {
-  if (e.key?.startsWith('drawchallenge_')) {
-    gameMode = getGameMode();
-    updateModeUi();
-    refreshKeywordDisplay();
-    updateQuotaUi();
+onModelStatus((state) => {
+  modelStatusEl.textContent = state.message;
+  modelStatusEl.classList.toggle('model-ready', state.phase === 'ready');
+  modelStatusEl.classList.toggle('model-downloading', state.phase === 'downloading');
+  modelStatusEl.classList.toggle('quota-empty', state.phase === 'error');
+  if (state.phase === 'downloading' && !busy) {
+    showStatus(`${state.message}. Puedes ir dibujando.`);
   }
 });
 
 updateModeUi();
 refreshKeywordDisplay();
-updateQuotaUi();
+preloadModel().catch((err) => showStatus(err.message, 'error'));
 
-if (!hasGeminiApiKey()) {
-  showStatus('Configura tu API key de Gemini en el panel de control.', 'error');
-} else if (gameMode === 'gemini') {
+if (gameMode === 'local') {
   assignNewWord();
 } else {
-  showStatus('');
+  showStatus('El jurado se descarga una vez en este dispositivo.');
 }
