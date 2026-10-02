@@ -107,7 +107,7 @@ export function commentForScore(score, keyword) {
 function buildPrompt(keyword) {
   return `The player had to draw: "${keyword}".
 Look at the sketch and score only how recognizable it is.
-1 means unrecognizable. 10 means anyone would guess it instantly. Be strict.
+1 means unrecognizable. 10 means anyone would guess it instantly.
 Reply with a single integer from 1 to 10 and nothing else.
 RESPUESTA:`;
 }
