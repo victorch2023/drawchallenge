@@ -7,9 +7,9 @@ La evaluación ocurre **en el navegador**. La primera vez se descarga **SmolVLM 
 ## Funciones
 
 - Lienzo a pantalla completa (ratón o tacto)
-- Modo **La IA elige**: el modelo propone una palabra dibujable
+- Modo **Al azar**: elige una palabra dibujable de una lista, sin repetir las recientes
 - Modo **Mi lista**: palabras del panel de control
-- Botón **Entregar**: el mismo modelo mira el dibujo y comenta, en el dispositivo
+- Botón **Entregar**: el modelo pone la nota del 1 al 10 y la app escribe el comentario
 
 ## Despliegue
 

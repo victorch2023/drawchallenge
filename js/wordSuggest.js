@@ -1,67 +1,35 @@
-import { generateText } from './localModel.js';
-import { getWordHistory, addWordToHistory } from './storage.js';
+import { addWordToHistory, getActiveKeyword, getWordHistory } from './storage.js';
 
-function buildPrompt(recentWords) {
-  const avoid = recentWords.length
-    ? ` No uses: ${recentWords.slice(0, 12).join(', ')}.`
-    : '';
-  return `Ignora la imagen: es un recuadro vacío, no la describas.
-Di una sola palabra en español, un objeto o animal fácil de dibujar (ejemplo: gato, casa, sol).${avoid}
-Solo esa palabra.
-RESPUESTA:`;
-}
+export const DRAWABLE_WORDS = [
+  'gato', 'perro', 'pez', 'pájaro', 'tortuga', 'conejo', 'elefante', 'jirafa',
+  'serpiente', 'mariposa', 'abeja', 'pulpo', 'rana', 'pato', 'gallina', 'caballo',
+  'vaca', 'cerdo', 'oveja', 'león', 'oso', 'pingüino', 'caracol', 'ratón',
+  'casa', 'sol', 'luna', 'estrella', 'árbol', 'flor', 'coche', 'bicicleta',
+  'barco', 'avión', 'tren', 'sombrero', 'gafas', 'reloj', 'llave', 'libro',
+  'taza', 'plato', 'silla', 'mesa', 'cama', 'puerta', 'ventana', 'escalera',
+  'paraguas', 'globo', 'pelota', 'guitarra', 'zapato', 'mochila', 'helado', 'manzana',
+  'plátano', 'pizza', 'pastel', 'huevo', 'zanahoria', 'montaña', 'puente', 'castillo',
+  'faro', 'cohete', 'nube', 'rayo', 'bandera', 'corona', 'espada', 'ancla',
+  'semáforo', 'autobús', 'camión', 'moto', 'helicóptero', 'robot', 'florero', 'lápiz',
+  'tijeras', 'martillo', 'cepillo', 'jabón', 'toalla', 'almohada', 'lámpara', 'televisor',
+  'cámara', 'balón', 'raqueta', 'patín', 'cometa', 'tela de araña', 'hueso', 'queso',
+];
 
-const WEAK_WORDS = /^(uno|dos|tres|cuatro|cinco|blanco|negro|imagen|foto|dibujo|palabra|respuesta|recuadro|cuadrado|nada|objeto|cosa|the|a|an)$/i;
-
-function acceptableWord(word) {
-  return Boolean(word) && word.length >= 3 && !WEAK_WORDS.test(word);
-}
-
-function parseWord(text) {
-  const line = String(text || '')
-    .replace(/^RESPUESTA:\s*/i, '')
-    .split('\n')
-    .map((part) => part.trim())
-    .find(Boolean) || '';
-  const word = line
-    .replace(/^["'«»]+|["'«».!,]+$/g, '')
-    .split(/[.:;]/)[0]
-    .trim();
-  const parts = word.split(/\s+/).filter(Boolean).slice(0, 3);
-  if (parts.length === 0 || parts.join(' ').length > 32) return '';
-  if (/^(palabra|respuesta|object|animal)$/i.test(parts[0])) return '';
-  return parts.join(' ');
-}
-
-function placeholderImage() {
-  const canvas = document.createElement('canvas');
-  canvas.width = 48;
-  canvas.height = 48;
-  const ctx = canvas.getContext('2d');
-  ctx.fillStyle = '#ffffff';
-  ctx.fillRect(0, 0, 48, 48);
-  return canvas.toDataURL('image/png');
+function pickWord() {
+  const recent = new Set(getWordHistory().map((word) => word.toLowerCase()));
+  const current = getActiveKeyword().toLowerCase();
+  let pool = DRAWABLE_WORDS.filter(
+    (word) => word.toLowerCase() !== current && !recent.has(word.toLowerCase())
+  );
+  if (pool.length === 0) {
+    pool = DRAWABLE_WORDS.filter((word) => word.toLowerCase() !== current);
+  }
+  if (pool.length === 0) pool = DRAWABLE_WORDS;
+  return pool[Math.floor(Math.random() * pool.length)];
 }
 
 export async function suggestDrawingWord() {
-  const recentWords = getWordHistory();
-  const imageDataUrl = placeholderImage();
-  let word = '';
-
-  for (let attempt = 0; attempt < 2 && !word; attempt += 1) {
-    const extra = attempt === 0 ? '' : ' No respondas con números ni con la palabra imagen.';
-    const text = await generateText({
-      prompt: `${buildPrompt(recentWords)}${extra}`,
-      imageDataUrl,
-      maxNewTokens: 16,
-    });
-    const parsed = parseWord(text);
-    if (acceptableWord(parsed)) word = parsed;
-  }
-
-  if (!word) {
-    throw new Error('El jurado no propuso una palabra clara. Prueba otra vez.');
-  }
+  const word = pickWord();
   addWordToHistory(word);
   return { word, hint: '' };
 }
