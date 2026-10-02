@@ -38,6 +38,10 @@ En **Settings → Environment Variables**:
 | `ADMIN_TOKEN` | una contraseña larga que solo tú conozcas |
 | `ALLOWED_ORIGINS` | `https://victorch2023.github.io,http://localhost:8080,http://127.0.0.1:8080` |
 
+La URL de producción del API es:
+
+`https://drawchallenge-five.vercel.app`
+
 ### 3. Redeploy
 
 En **Deployments**, vuelve a desplegar el último commit (o espera al deploy automático tras el push).
