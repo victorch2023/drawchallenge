@@ -3,9 +3,13 @@ const STORAGE_KEYS = {
   activeKeyword: 'drawchallenge_active_keyword',
   gameMode: 'drawchallenge_game_mode',
   wordHistory: 'drawchallenge_gemini_word_history',
+  clientId: 'drawchallenge_client_id',
+  analyticsApiUrl: 'drawchallenge_analytics_api_url',
 };
 
 const DEFAULT_KEYWORDS = ['árbol', 'casa', 'sol', 'gato', 'coche', 'flor'];
+const DEFAULT_ANALYTICS_API =
+  'https://drawchallenge-victorch2023s-projects.vercel.app';
 const MAX_WORD_HISTORY = 200;
 
 export function getKeywords() {
@@ -76,4 +80,34 @@ export function addWordToHistory(word) {
   const history = getWordHistory().filter((w) => w.toLowerCase() !== cleaned.toLowerCase());
   history.unshift(cleaned);
   localStorage.setItem(STORAGE_KEYS.wordHistory, JSON.stringify(history.slice(0, MAX_WORD_HISTORY)));
+}
+
+function randomClientId() {
+  if (globalThis.crypto?.randomUUID) {
+    return crypto.randomUUID().replace(/-/g, '');
+  }
+  return `id${Date.now().toString(36)}${Math.random().toString(36).slice(2, 12)}`;
+}
+
+export function getClientId() {
+  let id = localStorage.getItem(STORAGE_KEYS.clientId)?.trim();
+  if (id && /^[a-zA-Z0-9_-]{8,80}$/.test(id)) return id;
+  id = randomClientId();
+  localStorage.setItem(STORAGE_KEYS.clientId, id);
+  return id;
+}
+
+export function getAnalyticsApiUrl() {
+  const stored = localStorage.getItem(STORAGE_KEYS.analyticsApiUrl)?.trim();
+  if (stored) return stored.replace(/\/$/, '');
+  return DEFAULT_ANALYTICS_API;
+}
+
+export function setAnalyticsApiUrl(url) {
+  const cleaned = String(url || '').trim().replace(/\/$/, '');
+  if (cleaned) {
+    localStorage.setItem(STORAGE_KEYS.analyticsApiUrl, cleaned);
+  } else {
+    localStorage.removeItem(STORAGE_KEYS.analyticsApiUrl);
+  }
 }

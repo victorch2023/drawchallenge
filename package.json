@@ -1,7 +1,11 @@
 {
   "name": "drawchallenge",
   "private": true,
+  "type": "module",
   "scripts": {
     "start": "node scripts/serve.mjs"
+  },
+  "dependencies": {
+    "@vercel/blob": "^1.1.1"
   }
 }
