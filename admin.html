@@ -42,56 +42,20 @@
         <ul id="keyword-list" class="keyword-list"></ul>
       </section>
 
-      <section class="card" id="gemini-config">
-        <h2>Gemini</h2>
+      <section class="card" id="model-config">
+        <h2>Jurado en el dispositivo</h2>
         <p class="hint">
-          La API key se guarda solo en <strong>este dispositivo</strong> (localStorage).
-          No se sube a GitHub.
+          SmolVLM 256M, modelo abierto, se descarga una vez en este navegador (~200 MB)
+          y puntúa el dibujo aquí. No hay API key ni cuota.
         </p>
-        <p id="gemini-key-status" class="key-status missing">No configurada</p>
-        <pre id="admin-quota-display" class="quota-detail" hidden aria-live="polite">—</pre>
-        <div class="model-row">
-          <label for="gemini-proxy-url">Proxy Vercel</label>
-          <input
-            id="gemini-proxy-url"
-            type="url"
-            placeholder="https://drawchallenge-victorch2023s-projects.vercel.app/api/gemini"
-          >
+        <p id="model-status-detail" class="key-status missing">Aún no descargado</p>
+        <div class="add-keyword-row">
+          <button id="btn-preload-model" type="button" class="btn btn-primary">Descargar modelo</button>
+          <button id="btn-clear-model" type="button" class="btn btn-secondary">Borrar del navegador</button>
         </div>
         <p class="hint small">
-          Opción B: el proxy lee la cuota real de Google. Sin proxy, solo verás el contador local (opción A).
-        </p>
-        <div class="model-row">
-          <label for="gemini-daily-limit">Límite local est.</label>
-          <input
-            id="gemini-daily-limit"
-            type="number"
-            min="1"
-            step="1"
-            placeholder="Auto según modelo"
-          >
-        </div>
-        <p class="hint small">Solo para el contador local si no hay datos del proxy. Déjalo vacío para usar el valor del modelo.</p>
-        <div class="api-row">
-          <input
-            id="gemini-api-key"
-            type="password"
-            placeholder="Pega tu API key (AIza… o AQ.…)"
-            autocomplete="off"
-          >
-          <button id="btn-save-gemini" type="button" class="btn btn-primary">Guardar</button>
-        </div>
-        <div class="model-row">
-          <label for="gemini-model">Modelo</label>
-          <select id="gemini-model">
-            <option value="gemini-2.5-flash">gemini-2.5-flash (recomendado)</option>
-            <option value="gemini-2.5-flash-lite">gemini-2.5-flash-lite</option>
-            <option value="gemini-2.0-flash">gemini-2.0-flash</option>
-          </select>
-        </div>
-        <button id="btn-clear-gemini" type="button" class="btn btn-secondary">Eliminar key</button>
-        <p class="hint small">
-          ¿Cómo obtener una key gratis? Sigue la guía al final del <code>README.md</code>.
+          Hace falta un navegador reciente (Chrome o Edge). Si hay GPU, la usa; si no, corre más lento en el procesador.
+          La primera vez necesita internet para bajar el modelo. Después funciona con la copia guardada.
         </p>
       </section>
     </main>

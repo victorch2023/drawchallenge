@@ -18,7 +18,7 @@
         <span class="eyebrow">Draw Challenge</span>
       </div>
       <div class="topbar-actions">
-        <p id="quota-display" class="quota-badge" hidden aria-live="polite">Gemini hoy: —</p>
+        <p id="model-status" class="quota-badge" aria-live="polite">Jurado local</p>
         <a href="admin.html" class="nav-link nav-link-compact">Panel</a>
       </div>
     </header>
@@ -30,7 +30,7 @@
         <p id="word-hint" class="word-hint" hidden></p>
       </div>
       <div class="mode-switch" role="group" aria-label="Modo de juego">
-        <button id="btn-mode-gemini" type="button" class="btn btn-mode active">Gemini elige</button>
+        <button id="btn-mode-local" type="button" class="btn btn-mode active">La IA elige</button>
         <button id="btn-mode-manual" type="button" class="btn btn-mode">Mi lista</button>
       </div>
     </section>
@@ -52,7 +52,7 @@
 
     <section id="result-panel" class="result-sheet" hidden>
       <div class="result-sheet-inner card">
-        <p class="label">Veredicto de Gemini</p>
+        <p class="label">Veredicto</p>
         <div class="score-ring">
           <span id="result-score" class="score-value">—</span>
           <span class="score-max">/ 10</span>

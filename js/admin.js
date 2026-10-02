@@ -3,49 +3,21 @@ import {
   setKeywords,
   getActiveKeyword,
   setActiveKeyword,
-  getGeminiApiKey,
-  setGeminiApiKey,
-  clearGeminiApiKey,
-  getGeminiModel,
-  setGeminiModel,
-  setGeminiDailyLimit,
-  setGeminiProxyUrl,
-  getGeminiProxyUrl,
-  maskGeminiApiKey,
 } from './storage.js';
-import { hasGeminiApiKey, validateGeminiApiKey } from './evaluate.js';
-import { refreshQuotaDisplay } from './quotaUi.js';
+import { clearModelCache, onModelStatus, preloadModel } from './localModel.js';
 
 const keywordInput = document.getElementById('keyword-input');
 const btnAdd = document.getElementById('btn-add');
 const keywordList = document.getElementById('keyword-list');
 const activeDisplay = document.getElementById('active-keyword');
-const geminiKeyInput = document.getElementById('gemini-api-key');
-const geminiModelSelect = document.getElementById('gemini-model');
-const geminiDailyLimitInput = document.getElementById('gemini-daily-limit');
-const geminiProxyUrlInput = document.getElementById('gemini-proxy-url');
-const btnSaveGemini = document.getElementById('btn-save-gemini');
-const btnClearGemini = document.getElementById('btn-clear-gemini');
-const geminiStatus = document.getElementById('gemini-key-status');
-const adminQuotaEl = document.getElementById('admin-quota-display');
+const modelStatus = document.getElementById('model-status-detail');
+const btnPreload = document.getElementById('btn-preload-model');
+const btnClearModel = document.getElementById('btn-clear-model');
 const statusEl = document.getElementById('admin-status');
 
 function showStatus(message, type = 'info') {
   statusEl.textContent = message;
   statusEl.className = `status-message ${type}`;
-}
-
-function renderGeminiStatus() {
-  if (hasGeminiApiKey()) {
-    geminiStatus.textContent = `Configurada: ${maskGeminiApiKey(getGeminiApiKey())}`;
-    geminiStatus.className = 'key-status configured';
-    adminQuotaEl.hidden = false;
-    refreshQuotaDisplay(adminQuotaEl);
-  } else {
-    geminiStatus.textContent = 'No configurada';
-    geminiStatus.className = 'key-status missing';
-    adminQuotaEl.hidden = true;
-  }
 }
 
 function renderKeywords() {
@@ -87,7 +59,6 @@ function renderKeywords() {
       setKeywords(updated);
       if (getActiveKeyword() === word) setActiveKeyword(updated[0]);
       renderKeywords();
-      showStatus('Palabra eliminada.', 'success');
     });
 
     actions.append(btnUse, btnDelete);
@@ -119,40 +90,24 @@ keywordInput.addEventListener('keydown', (e) => {
   if (e.key === 'Enter') btnAdd.click();
 });
 
-btnSaveGemini.addEventListener('click', () => {
-  try {
-    const rawKey = geminiKeyInput.value.trim();
-    if (rawKey) {
-      setGeminiApiKey(validateGeminiApiKey(rawKey));
-    } else if (!hasGeminiApiKey()) {
-      throw new Error('Falta la API key de Gemini.');
-    }
-    if (geminiModelSelect.value) setGeminiModel(geminiModelSelect.value);
-    setGeminiProxyUrl(geminiProxyUrlInput.value);
-    const limitRaw = geminiDailyLimitInput.value.trim();
-    setGeminiDailyLimit(limitRaw ? Number(limitRaw) : 0);
-    geminiKeyInput.value = '';
-    renderGeminiStatus();
-    showStatus('Configuración de Gemini guardada.', 'success');
-  } catch (err) {
-    showStatus(err.message, 'error');
-  }
+btnPreload.addEventListener('click', () => {
+  btnPreload.disabled = true;
+  preloadModel()
+    .then(() => showStatus('El jurado ya está en este dispositivo.', 'success'))
+    .catch((err) => showStatus(err.message, 'error'))
+    .finally(() => {
+      btnPreload.disabled = false;
+    });
 });
 
-btnClearGemini.addEventListener('click', () => {
-  clearGeminiApiKey();
-  geminiKeyInput.value = '';
-  renderGeminiStatus();
-  showStatus('API key eliminada de este navegador.', 'success');
+btnClearModel.addEventListener('click', async () => {
+  await clearModelCache();
+  showStatus('Modelo borrado de este navegador.', 'success');
 });
 
-geminiModelSelect.addEventListener('change', () => {
-  renderGeminiStatus();
+onModelStatus((state) => {
+  modelStatus.textContent = state.message;
+  modelStatus.className = `key-status ${state.phase === 'ready' ? 'configured' : 'missing'}`;
 });
 
-geminiModelSelect.value = getGeminiModel();
-geminiProxyUrlInput.value = getGeminiProxyUrl();
-const savedLimit = localStorage.getItem('drawchallenge_gemini_daily_limit');
-if (savedLimit) geminiDailyLimitInput.value = savedLimit;
-renderGeminiStatus();
 renderKeywords();
