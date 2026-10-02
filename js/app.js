@@ -53,7 +53,7 @@ function refreshKeywordDisplay() {
 function updateModeUi() {
   btnModeLocal.classList.toggle('active', gameMode === 'local');
   btnModeManual.classList.toggle('active', gameMode === 'manual');
-  btnNewWord.textContent = gameMode === 'local' ? 'Otra de la IA' : 'Otra de mi lista';
+  btnNewWord.textContent = gameMode === 'local' ? 'Otra al azar' : 'Otra de mi lista';
 }
 
 function hideResult() {
@@ -80,22 +80,11 @@ async function assignNewWord() {
   drawing.clear();
 
   if (gameMode === 'local') {
-    setBusy(true);
-    keywordEl.textContent = '…';
-    setWordHint('');
-    showStatus('La IA está eligiendo una palabra dibujable…');
-    try {
-      const { word, hint } = await suggestDrawingWord();
-      setActiveKeyword(word);
-      refreshKeywordDisplay();
-      setWordHint(hint);
-      showStatus('¡Nueva palabra lista!', 'success');
-    } catch (err) {
-      refreshKeywordDisplay();
-      showStatus(err.message, 'error');
-    } finally {
-      setBusy(false);
-    }
+    const { word, hint } = await suggestDrawingWord();
+    setActiveKeyword(word);
+    refreshKeywordDisplay();
+    setWordHint(hint);
+    showStatus('Palabra nueva.', 'success');
     return;
   }
 
