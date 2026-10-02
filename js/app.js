@@ -9,6 +9,7 @@ import { DrawingCanvas } from './drawing.js';
 import { evaluateDrawing } from './evaluate.js';
 import { suggestDrawingWord } from './wordSuggest.js';
 import { onModelStatus, preloadModel } from './localModel.js';
+import { reportSubmission } from './analytics.js';
 
 const canvas = document.getElementById('drawing-canvas');
 const keywordEl = document.getElementById('keyword-display');
@@ -125,6 +126,7 @@ btnSubmit.addEventListener('click', async () => {
     const result = await evaluateDrawing(keyword, imageBase64);
     showResult(result.score, result.reason);
     showStatus('¡Evaluación lista!', 'success');
+    reportSubmission({ keyword, score: result.score }).catch(() => {});
   } catch (err) {
     showStatus(err.message, 'error');
   } finally {

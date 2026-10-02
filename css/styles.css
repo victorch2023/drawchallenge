@@ -364,7 +364,8 @@ code {
 }
 
 .model-row select,
-.model-row input[type='number'] {
+.model-row input[type='number'],
+.model-row input[type='url'] {
   flex: 1;
   font: inherit;
   padding: 0.65rem 0.85rem;
@@ -607,6 +608,38 @@ code {
 .result-sheet-inner .btn-primary {
   width: 100%;
   margin-top: 0.75rem;
+}
+
+.stats-summary {
+  display: grid;
+  gap: 0.4rem;
+  font-size: 1rem;
+}
+
+.stats-summary p {
+  margin: 0;
+}
+
+.stats-table-wrap {
+  overflow-x: auto;
+}
+
+.stats-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.92rem;
+}
+
+.stats-table th,
+.stats-table td {
+  text-align: left;
+  padding: 0.55rem 0.4rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.stats-table th {
+  color: var(--muted);
+  font-weight: 600;
 }
 
 @media (max-width: 640px) {
