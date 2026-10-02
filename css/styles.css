@@ -41,7 +41,7 @@ body {
     var(--bg);
 }
 
-/* Quita hide-optional-controls del <body> en index.html para volver a mostrar Panel, modos y Otra al azar */
+/* Quita hide-optional-controls del <body> en index.html para volver a mostrar Panel y modos */
 body.hide-optional-controls .ui-optional {
   display: none !important;
 }
@@ -420,7 +420,7 @@ code {
   background: #f0ebe3;
   border-radius: 999px;
   white-space: nowrap;
-  max-width: 14rem;
+  max-width: 18rem;
   overflow: hidden;
   text-overflow: ellipsis;
 }
@@ -649,7 +649,7 @@ code {
 
 @media (max-width: 640px) {
   .quota-badge {
-    max-width: 7.5rem;
+    max-width: 12rem;
     font-size: 0.62rem;
   }
 

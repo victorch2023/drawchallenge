@@ -140,12 +140,16 @@ btnModeLocal.addEventListener('click', () => switchMode('local'));
 btnModeManual.addEventListener('click', () => switchMode('manual'));
 
 onModelStatus((state) => {
-  modelStatusEl.textContent = state.message;
-  modelStatusEl.classList.toggle('model-ready', state.phase === 'ready');
-  modelStatusEl.classList.toggle('model-downloading', state.phase === 'downloading');
+  const ready = state.phase === 'ready';
+  const waiting = state.phase === 'idle' || state.phase === 'downloading';
+  modelStatusEl.textContent = ready
+    ? 'Juguemos'
+    : 'Por favor, espera. Cargando juego...';
+  modelStatusEl.classList.toggle('model-ready', ready);
+  modelStatusEl.classList.toggle('model-downloading', waiting);
   modelStatusEl.classList.toggle('quota-empty', state.phase === 'error');
   if (state.phase === 'downloading' && !busy) {
-    showStatus(`${state.message}. Puedes ir dibujando.`);
+    showStatus('Por favor, espera. Cargando juego...');
   }
 });
 
